@@ -59,6 +59,9 @@
     <addaction name="actionPaste"/>
     <addaction name="actionCut"/>
     <addaction name="actionUndo"/>
+    <addaction name="actionChange_Backround_Color"/>
+    <addaction name="actionChange_Font_Color"/>
+    <addaction name="actionChange_Font_Size"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -137,6 +140,21 @@
    </property>
    <property name="text">
     <string>Save As</string>
+   </property>
+  </action>
+  <action name="actionChange_Backround_Color">
+   <property name="text">
+    <string>Change Backround Color</string>
+   </property>
+  </action>
+  <action name="actionChange_Font_Color">
+   <property name="text">
+    <string>Change Font Color</string>
+   </property>
+  </action>
+  <action name="actionChange_Font_Size">
+   <property name="text">
+    <string>Change Font</string>
    </property>
   </action>
  </widget>

@@ -1,5 +1,11 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include <QPalette>
+#include <QColorDialog>
+#include<QPainter>
+#include <QCloseEvent>
+#include <QMessageBox>
+#include <QFontDialog>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -7,6 +13,20 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     this->setCentralWidget(ui->textEdit);
+
+    setWindowTitle("Editor");
+
+    ui->menubar->setStyleSheet("QMenuBar { background-color: rgb(192, 192, 192)}");
+
+    QPalette pl = ui->textEdit->palette();
+    pl.setColor(QPalette::Base, Qt::white);
+    pl.setColor(QPalette::Text, Qt::black);
+    ui->textEdit->setPalette(pl);
+
+    QFont font;
+    font.setPointSize(12);
+    ui->textEdit->setFont(font);
+
 }
 
 MainWindow::~MainWindow()
@@ -67,15 +87,11 @@ void MainWindow::on_actionSave_As_triggered()
 
 void MainWindow::on_actionPrint_triggered()
 {
-    QPrinter* printer;
-    QPrintDialog printerDialog(printer, this);
-    if (printerDialog.exec() == QDialog::Rejected)
-    {
-        QMessageBox::warning(this, "Warning", "Cannot Acces or print terminated");
-        return;
-    }
 
-    ui->textEdit->print(printer);
+    QPrinter printer(QPrinter::HighResolution);
+    printer.setOutputFormat(QPrinter::PdfFormat);
+    printer.setOutputFileName(QFileDialog::getSaveFileName(this, "Print to", "C:/Users/Andrew/Documents", "Pdf (*.pdf)"));
+    ui->textEdit->print(&printer);
 
 }
 
@@ -107,5 +123,73 @@ void MainWindow::on_actionCut_triggered()
 void MainWindow::on_actionUndo_triggered()
 {
     ui->textEdit->undo();
+}
+
+
+
+
+
+void MainWindow::on_actionChange_Backround_Color_triggered()
+{
+    QPalette pl = ui->textEdit->palette();
+    pl.setColor(QPalette::Base, QColorDialog::getColor(Qt::white, this));
+    ui->textEdit->setPalette(pl);
+}
+
+
+void MainWindow::on_actionChange_Font_Color_triggered()
+{
+    QPalette pl = ui->textEdit->palette();
+    pl.setColor(QPalette::Text, QColorDialog::getColor(Qt::white, this));
+    ui->textEdit->setPalette(pl);
+}
+
+
+void MainWindow::on_actionSave_triggered()
+{
+    if (currentFile != "")
+    {
+        QFile file(currentFile);
+        if (!file.open(QFile::WriteOnly | QFile :: Text))
+        {
+            if (file.errorString() != "No file name specified")
+                QMessageBox::warning(this, "Warning", "Cannot save " + file.errorString());
+            return;
+
+        }
+        QTextStream out(&file);
+        QString text = ui->textEdit->toPlainText();
+        out << text;
+        file.close();
+    }
+
+    else
+    {
+        this->on_actionSave_As_triggered();
+    }
+
+
+}
+
+void MainWindow::closeEvent(QCloseEvent *event)  // show prompt when user wants to close app
+{
+    event->ignore();
+    auto answer = QMessageBox::question(this, "Close Confirmation", "Save before exit?", QMessageBox::Yes | QMessageBox::No |QMessageBox::Cancel );
+    if (QMessageBox::Yes == answer)
+    {
+        this->on_actionSave_triggered();
+        event->accept();
+    }
+
+    if (QMessageBox::No == answer)
+        event->accept();
+    else
+        return;
+}
+
+
+void MainWindow::on_actionChange_Font_Size_triggered()
+{
+    ui->textEdit->setFont(QFontDialog::getFont(0, ui->textEdit->font()));
 }
 

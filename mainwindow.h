@@ -42,8 +42,20 @@ private slots:
 
     void on_actionUndo_triggered();
 
+
+    void on_actionChange_Backround_Color_triggered();
+
+    void on_actionChange_Font_Color_triggered();
+
+    void on_actionSave_triggered();
+
+    void closeEvent(QCloseEvent *event);
+
+    void on_actionChange_Font_Size_triggered();
+
 private:
     Ui::MainWindow *ui;
     QString currentFile = "";
+    QString buffer = "";
 };
 #endif // MAINWINDOW_H
