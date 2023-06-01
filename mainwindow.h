@@ -53,9 +53,11 @@ private slots:
 
     void on_actionChange_Font_Size_triggered();
 
+    void on_textEdit_textChanged();
+
 private:
     Ui::MainWindow *ui;
     QString currentFile = "";
-    QString buffer = "";
+    bool isSaved;
 };
 #endif // MAINWINDOW_H

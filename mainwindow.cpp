@@ -27,6 +27,8 @@ MainWindow::MainWindow(QWidget *parent)
     font.setPointSize(12);
     ui->textEdit->setFont(font);
 
+    isSaved = true;
+
 }
 
 MainWindow::~MainWindow()
@@ -62,6 +64,7 @@ void MainWindow::on_actionOpen_triggered()
     file.close();
 
      }
+
 void MainWindow::on_actionSave_As_triggered()
 {
     QString filename = QFileDialog::getSaveFileName(this, "Save as", "C:/Users/Andrew/Documents", "All Files (*.*);; Text File (*.txt)");
@@ -81,6 +84,7 @@ void MainWindow::on_actionSave_As_triggered()
      QString text = ui->textEdit->toPlainText();
      out << text;
      file.close();
+     isSaved = true;
 
 }
 
@@ -161,6 +165,7 @@ void MainWindow::on_actionSave_triggered()
         QString text = ui->textEdit->toPlainText();
         out << text;
         file.close();
+        isSaved = true;
     }
 
     else
@@ -173,23 +178,38 @@ void MainWindow::on_actionSave_triggered()
 
 void MainWindow::closeEvent(QCloseEvent *event)  // show prompt when user wants to close app
 {
+
     event->ignore();
+
+    if(this->isSaved == true){
+        event->accept();
+        return;
+    }
+
     auto answer = QMessageBox::question(this, "Close Confirmation", "Save before exit?", QMessageBox::Yes | QMessageBox::No |QMessageBox::Cancel );
     if (QMessageBox::Yes == answer)
     {
         this->on_actionSave_triggered();
         event->accept();
+        return;
     }
 
-    if (QMessageBox::No == answer)
+    if (QMessageBox::No == answer){
         event->accept();
-    else
         return;
+    }
+
 }
 
 
 void MainWindow::on_actionChange_Font_Size_triggered()
 {
     ui->textEdit->setFont(QFontDialog::getFont(0, ui->textEdit->font()));
+}
+
+
+void MainWindow::on_textEdit_textChanged()
+{
+    isSaved = false;
 }
 
